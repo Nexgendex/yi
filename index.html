@@ -1,84 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wallet Connection and Token Creation</title>
-    <script
-      src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
-      type="application/javascript"
-    ></script>
-    <style>
-      body {
-        font-family: "Inter", sans-serif;
-        margin: 0;
-        padding: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background-color: #202020;
-        color: #ffffff;
-      }
-      .container {
-        max-width: 400px;
-        width: 100%;
-        margin: auto;
-        padding: 20px;
-        background: #303030;
-        border-radius: 20px;
-      }
-      button,
-      select,
-      input {
-        width: 100%;
-        padding: 12px;
-        margin-top: 10px;
-        border-radius: 20px;
-        border: 1px solid #b728f0;
-        background-color: #2172e5;
-        color: #fff;
-        font-size: 1rem;
-      }
-      input,
-      select {
-        background-color: #ded3d37d;
-        color: #fff;
-      }
-      button:hover {
-        background-color: #1a5bad;
-      }
-      .hidden {
-        display: none;
-      }
-      h1,
-      h2 {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Wallet Connection</h1>
-      <button id="connectButton">Connect Wallet</button>
-      <div id="walletInfo" class="hidden">
-        <p>Address: <span id="walletAddress"></span></p>
-        <p>Balance: <span id="walletBalance"></span> ETH</p>
-      </div>
+document.addEventListener("DOMContentLoaded", () => {
+  const walletInfo = document.getElementById("walletInfo");
+  const walletAddress = document.getElementById("walletAddress");
+  const walletBalance = document.getElementById("walletBalance");
 
-      <h2>Create Your ERC-20 Token</h2>
-      <input id="tokenName" type="text" placeholder="Token Name" required />
-      <input id="tokenSymbol" type="text" placeholder="Token Symbol" required />
-      <input
-        id="initialSupply"
-        type="number"
-        placeholder="Initial Supply"
-        required
-      />
-      <button id="createTokenButton">Create Token</button>
-    </div>
+  // 钱包连接功能
+  const connectButton = document.getElementById("connectButton");
+  if (connectButton) {
+    connectButton.addEventListener("click", async () => {
+      if (typeof window.ethereum !== "undefined") {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        try {
+          await provider.send("eth_requestAccounts", []);
+          const signer = provider.getSigner();
+          const address = await signer.getAddress();
+          const balance = await provider.getBalance(address);
+          const balanceInEth = ethers.utils.formatEther(balance);
+          walletAddress.innerText = address;
+          walletBalance.innerText = balanceInEth;
+          if (walletInfo) {
+            walletInfo.classList.remove("hidden");
+          }
+        } catch (error) {
+          console.error("Error connecting to wallet:", error);
+          alert("Error connecting to wallet: " + error.message);
+        }
+      } else {
+        alert("MetaMask is not installed!");
+      }
+    });
+  }
 
-    <script src="app.js"></script>
-  </body>
-</html>
+  // 代币创建功能
+  const createTokenButton = document.getElementById("createTokenButton");
+  if (createTokenButton) {
+    createTokenButton.addEventListener("click", async () => {
+      const tokenName = document.getElementById("tokenName").value;
+      const tokenSymbol = document.getElementById("tokenSymbol").value;
+      const initialSupply = document.getElementById("initialSupply").value;
+
+      const factoryAddress = "0x1b0f2c7dd983541775ba5d94ef45b4caf988ab88";
+      const factoryABI = [
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "symbol",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "initialSupply",
+              "type": "uint256"
+            }
+          ],
+          "name": "createToken",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ];
+
+      if (!window.ethereum) {
+        alert("Please install MetaMask to interact.");
+        return;
+      }
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const factory = new ethers.Contract(factoryAddress, factoryABI, signer);
+      try {
+        // 转换 initialSupply 为 BigNumber，假设代币使用 18 位小数
+        const initialSupplyFormatted = ethers.utils.parseUnits(initialSupply.toString(), 18);
+        console.log("Formatted Initial Supply: ", initialSupplyFormatted.toString());
+
+        const tx = await factory.createToken(tokenName, tokenSymbol, initialSupplyFormatted);
+        await tx.wait();
+        alert("Token created successfully!");
+      } catch (error) {
+        console.error("Failed to create token:", error);
+        alert("Error creating token: " + error.message);
+      }
+    });
+  }
+});

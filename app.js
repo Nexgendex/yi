@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const tokenSymbol = document.getElementById("tokenSymbol").value;
       const initialSupply = document.getElementById("initialSupply").value;
 
-      const factoryAddress = "0x1b0f2c7dd983541775ba5d94ef45b4caf988ab88";
+      const factoryAddress = "0xab26f77c8fd450478595b216dc7bec3e3f57b328";
       const factoryABI = [
         {
           inputs: [

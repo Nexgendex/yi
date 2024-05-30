@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const tokenSymbol = document.getElementById("tokenSymbol").value;
       const initialSupply = document.getElementById("initialSupply").value;
 
-      const factoryAddress = "0xcab14a6032dcd34ef0c3b7c46f6d0729f8c2c87c70d8919cf6334f41621ed604";
+      const factoryAddress = "0x1b0f2c7dd983541775ba5d94ef45b4caf988ab88";
       const factoryABI = [
         {
           inputs: [
@@ -88,5 +88,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
 

@@ -40,36 +40,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const factoryAddress = "0x1b0f2c7dd983541775ba5d94ef45b4caf988ab88";
       const factoryABI = [
-        {
-          "inputs": [
-            {
-              "internalType": "string",
-              "name": "name",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "symbol",
-              "type": "string"
-            },
-            {
-              "internalType": "uint256",
-              "name": "initialSupply",
-              "type": "uint256"
-            }
-          ],
-          "name": "createToken",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ];
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "symbol",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "initialSupply",
+        "type": "uint256"
+      }
+    ],
+    "name": "createToken",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+];
 
       if (!window.ethereum) {
         alert("Please install MetaMask to interact.");
